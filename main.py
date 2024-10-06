@@ -1,4 +1,7 @@
 import pygame
+from scripts.player import Player
+
+
 
 flags = pygame.RESIZABLE | pygame.SCALED
 window = pygame.display.set_mode((800, 600), flags)
@@ -10,8 +13,13 @@ FPS = 60
 background = pygame.image.load('image\\background.png')
 background = pygame.transform.scale(background, (800, 600))
 bullet = pygame.image.load('image\\bullet.png')
-player = pygame.image.load('image\\player.png')
-enemy = pygame.image.load('image\\enemy.png')
+player_image = pygame.image.load('image\\player.png')
+player_image = pygame.transform.scale(player_image, (90, 90))
+enemy_image = pygame.image.load('image\\enemy.png')
+
+player = Player(400, 550, player_image, 6)
+
+
 
 game = True
 while game:
@@ -19,6 +27,9 @@ while game:
         if event.type == pygame.QUIT:
             game = False
 
+    player.update()
+
     window.blit(background, (0, 0))
+    player.render(window)
     pygame.display.update()
     clock.tick(FPS)
