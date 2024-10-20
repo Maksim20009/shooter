@@ -7,3 +7,8 @@ class Player(Sprite):
             self.rect.x -= self.speed
         if keys[pygame.K_d] or keys[pygame.K_RIGHT]:
             self.rect.x += self.speed
+    def __init__(self, x, y, image, speed, health):
+        self.health = health
+
+    def get_damage(self):
+        self.health -= 1

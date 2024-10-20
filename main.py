@@ -2,6 +2,9 @@ import pygame
 from scripts.player import Player
 from scripts.functions import load_image
 from scripts.bullet import Bullet
+from scripts.enemy import Enemy
+from time import time 
+from random import randint
 
 flags = pygame.RESIZABLE | pygame.SCALED
 window = pygame.display.set_mode((800, 600), flags)
@@ -16,11 +19,15 @@ background = load_image('image\\background.png', (800, 600), None)
 
 bullet_image = load_image('image\\bullet.png', (35, 40), (0, 0, 0))
 player_image = load_image('image\\player.png', (90, 90), (255, 255, 255))
-enemy_image = load_image('image\\enemy.png', (100, 100), (0, 0, 0))
+enemy_image = load_image('image\\enemy.png', (100, 100), (250, 250, 250))
 
 player = Player(400, 550, player_image, 6)
 
-bullets = list()
+bullets = []
+enemies = []
+
+spawn_delta = 3.5
+timer = time()
 
 game = True
 while game:
@@ -37,8 +44,32 @@ while game:
         if bullet.rect.bottom <= 0:
             bullets.remove(bullet) 
 
+
+
+    delta = time() - timer
+    if delta > spawn_delta:
+        timer = time()
+        x = randint(enemy_image.get_width() // 2, 800 - enemy_image.get_width() // 2)
+        y = - enemy_image.get_height() / 2
+        speed = randint(5000, 7000) / 1000
+        health = randint(1, 2 )
+        enemies.append( Enemy(x, y, enemy_image, speed, health) )
+
+    for enemy in enemies:
+        enemy.update()
+        
+        for bullet in bullets:
+            if enemy.is_collide(bullet):
+                bullets.remove(bullet)
+                enemy.get_damage()
+        
+        if enemy.health <= 0:
+            enemies.remove(enemy)
+
     window.blit(background, (0, 0))
     player.render(window)
+    for enemy in enemies:
+        enemy.render(window)
     for bullet in bullets:
         bullet.render(window)
     pygame.display.update()
